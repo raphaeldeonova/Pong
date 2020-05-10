@@ -1,7 +1,7 @@
 import math
 import pygame
 import random
-from GameObject import gameObject
+from GameObject import GameObject
 
 class Ball(GameObject):
 
@@ -13,12 +13,18 @@ class Ball(GameObject):
         self.r = int(r)
         self.a = a
         self.speed = speed
-        self.xspeed = self.speed * math.cos(self.a)
-        self.yspeed = -self.speed * math.sin(self.a) # y-coordinate in pygame is reversed
+        self.xspeed = int(self.speed * math.cos(self.a))
+        self.yspeed = int(-self.speed * math.sin(self.a)) # y-coordinate in pygame is reversed
     
     #EFFECTS: renders the white ball on the surface with x, y, and radius
     def render(self):
         pygame.draw.circle(self.gameDisplay,(255,255,255),(self.x, self.y),self.r)
+    
+    #MODIFIES: this
+    #EFFECTS: bounces the ball from the top or bottom edge
+    def __bounce(self):
+        self.yspeed *= -1
+        self.x += self.xspeed
     
     #MODIFIES: this
     #EFFECTS: moves the ball according to it's ypeed and xspeed. If the ball is on the top or bottom edges,
@@ -26,10 +32,10 @@ class Ball(GameObject):
     def update(self):
         if (self.y + self.yspeed <= self.r):
             self.y = self.r
-            self.bounce()
+            self.__bounce()
         elif (self.y + self.yspeed >= self.screenheight - self.r):
-            self.y = self.screenheight
-            self.bounce()
+            self.y = self.screenheight - self.r
+            self.__bounce()
         else:
             self.y += self.yspeed
             self.x += self.xspeed
@@ -46,23 +52,18 @@ class Ball(GameObject):
         self.speed = int(random.uniform(3,5))
 
         if random.randint(0,1) == 1:
-            self.__updateSpeeds(a1)
+            self.a = a1
+            self.updateSpeeds()
         else:
-            self.__updateSpeeds(a2)
+            self.a = a2
+            self.updateSpeeds()
         pygame.time.wait(2000)
-    
-    #MODIFIES: this
-    #EFFECTS: bounces the ball from the top or bottom edge
-    def __bounce(self):
-        self.yspeed *= -1
-        self.x += self.xspeed
     
     #REQUIRE: angle of type float
     #MODIFIES: this
     #EFFECTS: Updates the speeds when angle is changed
-    def __updateSpeeds(self, angle):
-        self.a = angle
-        self.xspeed = self.speed * math.cos(self.a)
-        self.yspeed = -self.speed * math.sin(self.a)
+    def updateSpeeds(self):
+        self.xspeed = int(self.speed * math.cos(self.a))
+        self.yspeed = int(-self.speed * math.sin(self.a))
 
     

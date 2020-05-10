@@ -12,4 +12,8 @@ class Player(object):
         self.score += 1
         self.paddle.reset()
     
+    def reset(self):
+        self.score = 0
+        self.paddle.reset()
+    
     
